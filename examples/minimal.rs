@@ -114,4 +114,3 @@ fn button(_asset_server: &AssetServer) -> impl Bundle {
         )],
     )
 }
-

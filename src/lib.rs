@@ -1,3 +1,5 @@
+pub mod cargo;
+
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -94,4 +96,3 @@ impl Plugin for HachiyaPlugin {
         app.add_systems(Update, load_mods_system);
     }
 }
-
