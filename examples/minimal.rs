@@ -1,5 +1,8 @@
 //! TODO: Document.
 
+use std::path::Path;
+
+use bevy::log::LogPlugin;
 use bevy::prelude::*;
 use hachiya::{HachiyaPlugin, LoadMods};
 
@@ -31,8 +34,15 @@ fn button() -> impl Bundle {
 }
 
 /// TODO: Document.
-fn load(this: On<Pointer<Release>>, mut commands: Commands) {
+fn load(_this: On<Pointer<Release>>, mut commands: Commands) {
     commands.write_message(LoadMods);
+}
+
+fn repository() -> String {
+    format!(
+        "{}/examples/mods/",
+        std::env::var("CARGO_MANIFEST_DIR").unwrap()
+    )
 }
 
 /// TODO: Document.
@@ -73,7 +83,16 @@ fn setup(mut commands: Commands) {
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, HachiyaPlugin::new("./examples/mods/")))
+        .add_plugins((
+            DefaultPlugins.set(LogPlugin {
+                filter: "wgpu=error,hachiya=debug".into(),
+                level: bevy::log::Level::INFO,
+                ..default()
+            }),
+            HachiyaPlugin {
+                repository: Some(repository()),
+            },
+        ))
         .add_systems(Startup, setup)
         .run();
 }

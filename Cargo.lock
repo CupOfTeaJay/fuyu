@@ -2706,6 +2706,7 @@ dependencies = [
  "camino",
  "cargo_metadata",
  "dylib",
+ "thiserror 2.0.17",
 ]
 
 [[package]]

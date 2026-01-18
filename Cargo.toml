@@ -3,8 +3,12 @@ name = "hachiya"
 version = "0.1.0"
 edition = "2024"
 
+[lints.clippy]
+needless_doctest_main = "allow"
+
 [dependencies]
 bevy = "0.18"
 camino = "1.2.2"
 cargo_metadata = "0.23.1"
 dylib = "0.0.3"
+thiserror = "2.0.17"
