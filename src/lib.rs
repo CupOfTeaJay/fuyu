@@ -94,7 +94,7 @@ struct ModRepository {
 
 impl ModRepository {
     /// TODO: Document.
-    pub fn load(&mut self) {
+    pub fn load(&mut self, world: &mut World) {
         debug!("loading {}", self.root);
         let mut mods: HashMap<Mod, Output> = HashMap::new();
         for _mod in self.workspace.mods() {
@@ -103,11 +103,12 @@ impl ModRepository {
         for (_mod, output) in mods.iter() {
             if output.status.success() {
                 debug!("registering {}", _mod.name());
-                self.registry.insert(
-                    _mod.name().clone(),
-                    DynamicLibrary::open(Some(_mod.debug().as_ref()))
-                        .expect("failed to open dylib"),
-                );
+                let lib = DynamicLibrary::open(Some(_mod.debug().as_ref()))
+                    .expect("failed to open dylib");
+                let init: fn(&mut World) =
+                    unsafe { std::mem::transmute(lib.symbol::<usize>("init").unwrap()) };
+                init(world);
+                self.registry.insert(_mod.name().clone(), lib);
             }
         }
     }
@@ -133,8 +134,8 @@ fn load_mods(world: &mut World) {
         .read()
         .count();
     for _ in 0..messages {
-        world.resource_scope(|_world: &mut World, mut repository: Mut<ModRepository>| {
-            repository.load()
+        world.resource_scope(|world: &mut World, mut repository: Mut<ModRepository>| {
+            repository.load(world)
         });
     }
 }
