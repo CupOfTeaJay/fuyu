@@ -1,7 +1,5 @@
 //! TODO: Document.
 
-use std::path::Path;
-
 use bevy::log::LogPlugin;
 use bevy::prelude::*;
 use hachiya::{HachiyaPlugin, LoadMods};

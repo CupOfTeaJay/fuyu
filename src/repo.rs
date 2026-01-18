@@ -105,9 +105,10 @@ impl ModRepository {
                 debug!("registering {}", _mod.name());
                 let lib = DynamicLibrary::open(Some(_mod.debug().as_ref()))
                     .expect("failed to open dylib");
-                let init: fn(&mut World) =
+                let init: fn(&mut crate::Registrar) =
                     unsafe { std::mem::transmute(lib.symbol::<usize>("init").unwrap()) };
-                init(world);
+                let mut registrar = crate::Registrar::new();
+                init(&mut registrar);
                 self.registry.insert(_mod.name().clone(), lib);
             }
         }

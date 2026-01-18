@@ -1,13 +1,9 @@
 use bevy::prelude::*;
-use bevy::app::PostUpdate;
+use hachiya::Registrar;
 
 #[unsafe(no_mangle)]
-pub fn init(world: &mut World) {
-    world.resource_scope(|_world: &mut World, mut schedules: Mut<Schedules>| {
-        if let Some(schedule) = schedules.get_mut(PostUpdate) {
-            schedule.add_systems(hello);
-        }
-    });
+pub fn init(registrar: &mut Registrar) {
+    registrar.add_systems(PostUpdate, hello);
 }
 
 fn hello() {

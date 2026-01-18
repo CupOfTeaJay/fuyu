@@ -1,6 +1,6 @@
 //! TODO: Document.
 
-use bevy::ecs::system::SystemState;
+use bevy::ecs::{schedule::ScheduleLabel, system::SystemState};
 use bevy::prelude::*;
 use camino::Utf8PathBuf;
 
@@ -12,11 +12,10 @@ use repo::ModRepository;
 
 /// TODO: Document.
 fn load_mods(world: &mut World) {
-    let messages: usize = SystemState::<MessageReader<LoadMods>>::new(world)
-        .get(world)
-        .read()
-        .count();
-    for _ in 0..messages {
+    let mut state: SystemState<MessageMutator<LoadMods>> = SystemState::new(world);
+    let mut messages: MessageMutator<LoadMods> = state.get_mut(world);
+    if !messages.is_empty() {
+        messages.clear();
         world.resource_scope(|world: &mut World, mut repository: Mut<ModRepository>| {
             repository.load(world)
         });
@@ -119,3 +118,37 @@ impl Plugin for HachiyaPlugin {
 /// TODO: Document.
 #[derive(Message)]
 pub struct LoadMods;
+
+/// TODO: Document.
+pub struct Registrar {
+    /// TODO: Document.
+    systems: Vec<(Box<dyn ScheduleLabel>, Box<dyn System<In = (), Out = ()>>)>,
+}
+
+impl Registrar {
+    /// TODO: Document.
+    pub fn new() -> Self {
+        Registrar {
+            systems: Vec::new(),
+        }
+    }
+
+    /// TODO: Document.
+    pub fn add_systems<M>(
+        &mut self,
+        schedule: impl ScheduleLabel,
+        system: impl IntoSystem<(), (), M>,
+    ) -> &mut Self {
+        self.systems.push((
+            Box::new(schedule),
+            Box::new(IntoSystem::into_system(system)),
+        ));
+        self
+    }
+}
+
+impl Default for Registrar {
+    fn default() -> Self {
+        Registrar::new()
+    }
+}
