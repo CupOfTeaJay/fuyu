@@ -4,11 +4,11 @@ use bevy::ecs::{schedule::ScheduleLabel, system::SystemState};
 use bevy::prelude::*;
 use camino::Utf8PathBuf;
 
-mod error;
-mod repo;
+mod exceptions;
+mod repository;
 
-use error::HachiyaError;
-use repo::ModRepository;
+use exceptions::HachiyaError;
+use repository::ModRepository;
 
 /// TODO: Document.
 fn load_mods(world: &mut World) {

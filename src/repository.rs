@@ -9,7 +9,7 @@ use cargo_metadata::MetadataCommand;
 use cargo_metadata::{Metadata, Package, PackageName};
 use dylib::DynamicLibrary;
 
-use crate::error::HachiyaError;
+use crate::exceptions::HachiyaError;
 
 /// TODO: Document.
 #[derive(Clone, Eq, Hash, PartialEq)]
