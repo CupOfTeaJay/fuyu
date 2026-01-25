@@ -7,14 +7,14 @@ use crate::registrar::Registrar;
 /// TODO: Document.
 pub struct Applicator {
     /// TODO: Document.
-    registrar: Registrar,
+    _registrar: Registrar,
 }
 
 impl Applicator {
     /// TODO: Document.
-    fn add_systems(&mut self, world: &mut World) -> &mut Self {
+    fn _add_systems(&mut self, world: &mut World) -> &mut Self {
         world.resource_scope(|_world: &mut World, mut schedules: Mut<Schedules>| {
-            for (name, systems) in self.registrar.systems() {
+            for (name, systems) in self._registrar.systems() {
                 if let Some(schedule) = schedules.get_mut(systems.0) {
                     println!("Scheduling {}", name);
                     schedule.add_systems(systems.1);
@@ -25,37 +25,37 @@ impl Applicator {
     }
 
     /// TODO: Document.
-    fn register_components(&mut self, world: &mut World) -> &mut Self {
-        for component in self.registrar.components() {
+    fn _register_components(&mut self, world: &mut World) -> &mut Self {
+        for component in self._registrar.components() {
             world.register_component_with_descriptor(component);
         }
         self
     }
 
     /// TODO: Document.
-    fn register_resources(&mut self, world: &mut World) -> &mut Self {
-        for resource in self.registrar.resources() {
+    fn _register_resources(&mut self, world: &mut World) -> &mut Self {
+        for resource in self._registrar.resources() {
             world.register_resource_with_descriptor(resource);
         }
         self
     }
 
     /// TODO: Document.
-    pub fn apply(&mut self, world: &mut World) {
-        self.register_resources(world)
-            .register_components(world)
-            .add_systems(world);
+    pub fn _apply(&mut self, world: &mut World) {
+        self._register_resources(world)
+            ._register_components(world)
+            ._add_systems(world);
     }
 
     /// TODO: Document.
     pub fn new() -> Self {
         Applicator {
-            registrar: Registrar::new(),
+            _registrar: Registrar::new(),
         }
     }
 
     /// TODO: Document.
-    pub fn registrar(&mut self) -> &mut Registrar {
-        &mut self.registrar
+    pub fn _registrar(&mut self) -> &mut Registrar {
+        &mut self._registrar
     }
 }

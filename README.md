@@ -1,4 +1,12 @@
+<div align="center">
+
 # Hachiya
+
+[![crates.io](https://img.shields.io/crates/v/hachiya)](https://crates.io/crates/hachiya)
+[![docs.rs](https://docs.rs/hachiya/badge.svg)](https://docs.rs/hachiya)
+[![CI](https://github.com/cupofteajay/hachiya/actions/workflows/ci.yml/badge.svg)](https://github.com/cupofteajay/hachiya/actions/workflows/ci.yml)
+
+</div>
 
 Hachiya is an attempt to provide a mechanism for natively modifying a Bevy
 application. Meaning, as an alternative to incorporating a scripting engine, one

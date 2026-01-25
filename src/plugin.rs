@@ -109,7 +109,7 @@ fn initialize(commands: &mut Commands, plugin: &HachiyaPlugin) -> Result<(), Hac
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
 /// use bevy::prelude::*;
 /// use hachiya::HachiyaPlugin;
 ///

@@ -39,7 +39,8 @@ impl Mod {
             Ok(library) => unsafe {
                 match library.symbol::<usize>("main") {
                     Ok(hook) => {
-                        self.hook = Some(std::mem::transmute(hook));
+                        self.hook =
+                            Some(std::mem::transmute::<*mut usize, fn(&mut Registrar)>(hook));
                         self.library = Some(library);
                         Ok(self)
                     }
@@ -55,12 +56,9 @@ impl Mod {
         let mut is_dylib: bool = false;
         if let Some(target) = self.package.targets.first() {
             for crate_type in target.crate_types.iter() {
-                match crate_type {
-                    CrateType::DyLib => {
-                        is_dylib = true;
-                        break;
-                    }
-                    _ => (),
+                if crate_type == &CrateType::DyLib {
+                    is_dylib = true;
+                    break;
                 }
             }
         } else {
@@ -104,7 +102,7 @@ impl Mod {
         Mod {
             hook: None,
             library: None,
-            package: package,
+            package,
         }
     }
 }
@@ -120,7 +118,7 @@ pub enum BuildTarget {
 #[derive(Resource)]
 pub struct ModRepository {
     /// TODO: Document.
-    applicator: Applicator,
+    _applicator: Applicator,
 
     /// TODO: Document.
     extension: String,
@@ -220,31 +218,24 @@ impl ModRepository {
     /// TODO: Document.
     pub fn new(root: Utf8PathBuf) -> Result<Self, HachiyaError> {
         if root.is_dir() {
-            let extension: &str;
-            match std::env::consts::OS {
-                "macos" => {
-                    extension = ".dylib";
-                }
-                "windows" => {
-                    extension = ".dll";
-                }
-                "linux" => {
-                    extension = ".so";
-                }
+            let extension: &str = match std::env::consts::OS {
+                "macos" => ".dylib",
+                "windows" => ".dll",
+                "linux" => ".so",
                 _ => {
                     warn!(
                         "assuming a dylib extension of '.so' for unknown OS: {}",
                         std::env::consts::OS
                     );
-                    extension = ".so"
+                    ".so"
                 }
-            }
+            };
             let mut repository: ModRepository = ModRepository {
-                applicator: Applicator::new(),
+                _applicator: Applicator::new(),
                 extension: extension.to_string(),
                 members: HashMap::new(),
                 metadata: None,
-                root: root,
+                root,
                 state: BuildState::Unbuilt,
             };
             if let Err(err) = repository.index() {

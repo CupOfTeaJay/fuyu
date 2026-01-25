@@ -9,7 +9,7 @@ use crate::repository::BuildTarget;
 pub struct RepositoryRequest(pub RepositoryService);
 
 /// TODO: Document.
-#[derive(Clone, Debug,)]
+#[derive(Clone, Debug)]
 pub enum RepositoryService {
     BuildMod(String, BuildTarget),
     BuildRepository(BuildTarget),

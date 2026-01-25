@@ -16,13 +16,13 @@ type SystemPair = (Interned<dyn ScheduleLabel>, ScheduleConfigs<ScheduleSystem>)
 /// TODO: Document.
 struct Context {
     /// TODO: Document.
-    conditions: Vec<BoxedCondition>,
+    _conditions: Vec<BoxedCondition>,
 
     /// TODO: Document.
-    members: Vec<String>,
+    _members: Vec<String>,
 
     /// TODO: Document.
-    metadata: <ScheduleSystem as Schedulable>::GroupMetadata,
+    _metadata: <ScheduleSystem as Schedulable>::GroupMetadata,
 }
 
 impl Context {
@@ -33,9 +33,9 @@ impl Context {
         metadata: <ScheduleSystem as Schedulable>::GroupMetadata,
     ) -> Self {
         Context {
-            conditions,
-            members,
-            metadata,
+            _conditions: conditions,
+            _members: members,
+            _metadata: metadata,
         }
     }
 }

@@ -4,6 +4,7 @@ use thiserror::Error;
 
 /// TODO: Document.
 #[derive(Debug, Error)]
+#[allow(clippy::enum_variant_names)]
 pub enum HachiyaError {
     #[error("failed to build the repository; {0}")]
     BuildError(String),
