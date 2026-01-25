@@ -1,7 +1,7 @@
 //! TODO: Document.
 
 use std::collections::HashMap;
-use std::process::{Command, Output, Stdio};
+use std::process::{Command, Stdio};
 
 use bevy::prelude::*;
 use camino::Utf8PathBuf;
@@ -110,6 +110,13 @@ impl Mod {
 }
 
 /// TODO: Document.
+#[derive(Clone, Debug)]
+pub enum BuildTarget {
+    Debug,
+    Release,
+}
+
+/// TODO: Document.
 #[derive(Resource)]
 pub struct ModRepository {
     /// TODO: Document.
@@ -132,7 +139,7 @@ pub struct ModRepository {
 }
 
 impl ModRepository {
-    /// Builds the entire workspace.
+    /// Builds the entire workspace asynchronously.
     pub fn build(&mut self) -> Result<(), HachiyaError> {
         info!("building repository");
         match &self.state {
@@ -243,11 +250,7 @@ impl ModRepository {
             if let Err(err) = repository.index() {
                 Err(HachiyaError::InitializationError(err.to_string()))
             } else {
-                if let Err(err) = repository.build() {
-                    Err(HachiyaError::InitializationError(err.to_string()))
-                } else {
-                    Ok(repository)
-                }
+                Ok(repository)
             }
         } else {
             Err(HachiyaError::InitializationError(format!(

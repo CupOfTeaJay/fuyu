@@ -6,18 +6,44 @@ use camino::Utf8PathBuf;
 
 use crate::exceptions::HachiyaError;
 use crate::repository::ModRepository;
+use crate::services::{RepositoryRequest, RepositoryService};
 
 /// TODO: Document.
-fn load_mods(world: &mut World, state: &mut SystemState<MessageMutator<LoadMods>>) {
-    let mut messages = state.get_mut(world);
-    if !messages.is_empty() {
-        messages.clear();
-        world.resource_scope(|world: &mut World, mut repository: Mut<ModRepository>| {
-            if let Err(err) = repository.load_all(world) {
-                error!("{}", err);
+fn service(world: &mut World, state: &mut SystemState<MessageMutator<RepositoryRequest>>) {
+    world.resource_scope(|world: &mut World, mut repository: Mut<ModRepository>| {
+        let mut messages: MessageMutator<RepositoryRequest> = state.get_mut(world);
+        let requests: Vec<RepositoryRequest> = messages.read().map(|r| r.clone()).collect();
+        for request in requests {
+            match request.0 {
+                RepositoryService::BuildMod(_name, target) => {
+                    // TODO: Handle BuildMod
+                    warn!("BuildMod not yet implemented: {:?}", target);
+                }
+                RepositoryService::BuildRepository(_target) => {
+                    if let Err(err) = repository.build() {
+                        error!("{}", err);
+                    }
+                }
+                RepositoryService::LoadMod(_name, target) => {
+                    // TODO: Handle LoadMod
+                    warn!("LoadMod not yet implemented: {:?}", target);
+                }
+                RepositoryService::LoadRepository(_target) => {
+                    if let Err(err) = repository.load_all(world) {
+                        error!("{}", err);
+                    }
+                }
+                RepositoryService::UnloadMod(name) => {
+                    // TODO: Handle UnloadMod
+                    warn!("UnloadMod not yet implemented: {}", name);
+                }
+                RepositoryService::UnloadRepository => {
+                    // TODO: Handle UnloadRepository
+                    warn!("UnloadRepository not yet implemented");
+                }
             }
-        });
-    }
+        }
+    });
     state.apply(world);
 }
 
@@ -114,17 +140,17 @@ impl Plugin for HachiyaPlugin {
                 Ok(initialize(&mut commands, &plugin)?)
             }
         })
-        .add_systems(Update, ({
-            let mut state: Option<SystemState<MessageMutator<LoadMods>>> = None;
-            move |world: &mut World| {
-                let state = state.get_or_insert_with(|| SystemState::new(world));
-                load_mods(world, state);
-            }
-        }, poll))
-        .add_message::<LoadMods>();
+        .add_systems(
+            Last,
+            (poll, {
+                let mut state: Option<SystemState<MessageMutator<RepositoryRequest>>> = None;
+                move |world: &mut World| {
+                    let state = state.get_or_insert_with(|| SystemState::new(world));
+                    service(world, state);
+                }
+            })
+                .chain(),
+        )
+        .add_message::<RepositoryRequest>();
     }
 }
-
-/// TODO: Document.
-#[derive(Message)]
-pub struct LoadMods;
