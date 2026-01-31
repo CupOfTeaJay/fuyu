@@ -8,7 +8,7 @@ pub enum HachiyaError {
     #[error("failed to get 'main' symbol from shared object; {0}")]
     InvalidHook(#[from] Box<dyn Error + Send + Sync>),
 
-    #[error("failed to load shared object;")]
+    #[error("failed to load shared object; {0}")]
     LoadFailure(#[from] libloading::Error),
 
     #[error("failed to resolve the base-path of the assets directory")]

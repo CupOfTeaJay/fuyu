@@ -107,6 +107,7 @@ impl AssetLoader for Dylib {
         _settings: &(),
         load_context: &mut LoadContext<'_>,
     ) -> Result<Dylib, HachiyaError> {
+        println!("loading .so");
         Dylib::new(load_context.path().path())
     }
 
